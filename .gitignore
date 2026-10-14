@@ -1,4 +1,22 @@
+## .NET / Visual Studio
 bin/
 obj/
-.vs/
 *.user
+*.suo
+.vs/
+*.userosscache
+*.sln.docstates
+
+## NuGet
+*.nupkg
+packages/
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+## Rider / VS Code
+.idea/
+.vscode/
