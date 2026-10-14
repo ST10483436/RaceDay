@@ -7,134 +7,91 @@ namespace RaceDay.Api.Controllers
 
     public class CategoriesController : ControllerBase
     {//start of categoriesController class
-        
-        // Manages RaceDay events. Anyone can view events; only Organisers can create, update or delete.
-        
-        [Route("api/[controller]")]
-        [ApiController]
-        public class EventsController : ControllerBase
-        {// start of EventsController class
-            private int? CurrentUserId => HttpContext.Session.GetInt32("UserId");
-            private string? CurrentRole => HttpContext.Session.GetString("UserRole");
 
-            
-            // Retrieves all events in the system (public).
-           
-            /// <response code="200">List of events returned.</response>
-            [HttpGet]
-            [ProducesResponseType(StatusCodes.Status200OK)]
-            public IActionResult GetAll()
-            {// start of GETALL METHOD
-                var getter = new get_user_info();
-                return Ok(getter.get_all_events());
-            }//END OF GET ALL METHOD
+        private int? CurrentUserId => HttpContext.Session.GetInt32("UserId");
+        private string? CurrentRole => HttpContext.Session.GetString("UserRole");
 
-           
-            // Retrieves full details of a single event by ID (public).
-          
-            /// <param name="id">The event's unique ID.</param>
-            /// <response code="200">Event found.</response>
-            /// <response code="404">Event does not exist.</response>
-            [HttpGet("{id}")]
-            [ProducesResponseType(StatusCodes.Status200OK)]
-            [ProducesResponseType(StatusCodes.Status404NotFound)]
-            public IActionResult Get(int id)
-            {// start of Get method
-                var getter = new get_user_info();
-                var ev = getter.get_event_by_id(id);
-                if (ev == null) return NotFound($"Event {id} not found.");
-                return Ok(ev);
-            }//end of Get method 
-
-            
-            // Creates a new event. Only the logged-in Organiser can create.
-           
-            /// <response code="201">Event created.</response>
-            /// <response code="400">Validation error.</response>
-            /// <response code="401">Not logged in.</response>
-            /// <response code="403">User is not an Organiser.</response>
-            [HttpPost]
-            [ProducesResponseType(StatusCodes.Status201Created)]
-            [ProducesResponseType(StatusCodes.Status400BadRequest)]
-            [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-            [ProducesResponseType(StatusCodes.Status403Forbidden)]
-            public IActionResult Create(string name, string? description, DateTime date, string location, decimal distance, string eventType)
-            {// start of create method
-                if (CurrentUserId == null) return Unauthorized("Not logged in.");
-                if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can create events.");
-                if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(location))
-                    return BadRequest("Name and Location are required.");
-                if (eventType != "Run" && eventType != "Walk" && eventType != "Cycle")
-                    return BadRequest("EventType must be Run, Walk or Cycle.");
-
-                var getter = new get_user_info();
-                var org = getter.get_organiser_by_userId(CurrentUserId.Value);
-                if (org == null) return BadRequest("Organiser profile not found.");
-
-                var storer = new store_info();
-                string result = storer.store_event(org.OrganiserId, name, description ?? "", date.ToString("yyyy-MM-dd HH:mm:ss"), location, distance, eventType);
-
-                return StatusCode(201, new { message = result });
-            }//end of create method
-
-            
-            // Updates an event owned by the logged-in Organiser.
        
-            /// <response code="200">Event updated.</response>
-            /// <response code="403">Not the owning Organiser.</response>
-            /// <response code="404">Event not found.</response>
-            [HttpPut("{id}")]
-            [ProducesResponseType(StatusCodes.Status200OK)]
-            [ProducesResponseType(StatusCodes.Status403Forbidden)]
-            [ProducesResponseType(StatusCodes.Status404NotFound)]
-            public IActionResult Update(int id, string name, string? description, DateTime date, string location, decimal distance, string eventType)
-            {// start of Update method
-                if (CurrentUserId == null) return Unauthorized("Not logged in.");
-                if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can update events.");
-
-                var getter = new get_user_info();
-                var ev = getter.get_event_by_id(id);
-                if (ev == null) return NotFound();
-
-                var org = getter.get_organiser_by_userId(CurrentUserId.Value);
-                if (org == null || ev.OrganiserId != org.OrganiserId)
-                    return StatusCode(403, "You can only update your own events.");
-
-                var updater = new update_user_info();
-                string result = updater.update_event(id, name, description ?? "", date.ToString("yyyy-MM-dd HH:mm:ss"), location, distance, eventType);
-                return Ok(new { message = result });
-            }//end of Update method 
-
-            
-            // Deletes an event owned by the logged-in Organiser.
-            
-            /// <response code="204">Event deleted.</response>
-            /// <response code="403">Not the owning Organiser.</response>
-            /// <response code="404">Event not found.</response>
-            [HttpDelete("{id}")]
-            [ProducesResponseType(StatusCodes.Status204NoContent)]
-            [ProducesResponseType(StatusCodes.Status403Forbidden)]
-            [ProducesResponseType(StatusCodes.Status404NotFound)]
-            public IActionResult Delete(int id)
-            {// start of delete method 
-                if (CurrentUserId == null) return Unauthorized("Not logged in.");
-                if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can delete events.");
-
-                var getter = new get_user_info();
-                var ev = getter.get_event_by_id(id);
-                if (ev == null) return NotFound();
-
-                var org = getter.get_organiser_by_userId(CurrentUserId.Value);
-                if (org == null || ev.OrganiserId != org.OrganiserId)
-                    return StatusCode(403, "You can only delete your own events.");
-
-                var deleter = new delete_info();
-                deleter.delete_event(id);
-                return NoContent();
-            }//end of delete method 
-
-
-        }//end of eventController class
+        // Retrieves all categories for a specific event (public).
         
+        /// <param name="eventId">The event's ID.</param>
+        /// <response code="200">List of categories.</response>
+        /// <response code="404">Event not found.</response>
+        [HttpGet("events/{eventId}/categories")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetForEvent(int eventId)
+        {//START FOR GETFOREVENT METHOD
+            var getter = new get_user_info();
+            if (getter.get_event_by_id(eventId) == null)
+                return NotFound($"Event {eventId} not found.");
+            return Ok(getter.get_categories_for_event(eventId));
+        }// END FOR GETFOREVENT METHOD
+
+        
+        // Creates a new category under a specific event (Organiser only).
+       
+        /// <response code="201">Category created.</response>
+        /// <response code="403">Not the owning Organiser.</response>
+        /// <response code="404">Event not found.</response>
+        [HttpPost("events/{eventId}/categories")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Create(int eventId, string categoryName, int? minAge, int? maxAge)
+        {// START OF CREATE METHOD
+            if (CurrentUserId == null) return Unauthorized("Not logged in.");
+            if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can create categories.");
+
+            var getter = new get_user_info();
+            var ev = getter.get_event_by_id(eventId);
+            if (ev == null) return NotFound($"Event {eventId} not found.");
+
+            var org = getter.get_organiser_by_userId(CurrentUserId.Value);
+            if (org == null || ev.OrganiserId != org.OrganiserId)
+                return StatusCode(403, "You can only add categories to your own events.");
+
+            var storer = new store_info();
+            string result = storer.store_category(eventId, categoryName, minAge, maxAge);
+            return StatusCode(201, new { message = result });
+        }// END OF CREATE METHOD
+
+        
+        // Updates an existing category (Organiser only).
+        
+        /// <response code="200">Category updated.</response>
+        /// <response code="403">Not the owning Organiser.</response>
+        [HttpPut("categories/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public IActionResult Update(int id, string categoryName, int? minAge, int? maxAge)
+        {// START OF UPDATE METHOD
+            if (CurrentUserId == null) return Unauthorized("Not logged in.");
+            if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can update categories.");
+
+            var updater = new update_user_info();
+            string result = updater.update_category(id, categoryName, minAge, maxAge);
+            return Ok(new { message = result });
+        }// END  OF UPDATE METHOD
+
+        
+        // Deletes a category (Organiser only).
+        
+        /// <response code="200">Category deleted.</response>
+        /// <response code="403">Not the owning Organiser.</response>
+        [HttpDelete("categories/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public IActionResult Delete(int id)
+        {// START OF DELETE METHOD
+            if (CurrentUserId == null) return Unauthorized("Not logged in.");
+            if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can delete categories.");
+
+            var deleter = new delete_info();
+            string result = deleter.delete_category(id);
+            return Ok(new { message = result });
+        }//END OF DELETE METHOD
+
+
     }//end of CategoriesController class
- }//end of the namespace
+}//end of the namespace
