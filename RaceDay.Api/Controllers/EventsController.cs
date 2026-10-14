@@ -11,7 +11,7 @@ namespace RaceDay.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
-    {
+    {// start of Event Controller class
         private int? CurrentUserId => HttpContext.Session.GetInt32("UserId");
         private string? CurrentRole => HttpContext.Session.GetString("UserRole");
 
