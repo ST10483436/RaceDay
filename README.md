@@ -86,3 +86,14 @@ The database starts empty — all data is added through Swagger.
 - Views personal enrolment history
 - Views personal results
 
+  ## API Endpoints Overview
+
+| Controller | Endpoints |
+|---|---|
+| Auth | register, login, logout |
+| Users | get profile, update profile |
+| Events | get all, get one, create, update, delete |
+| Categories | get, create, update, delete |
+| Enrolments | enrol, view by event, my enrolments |
+| Results | record, view by event, my results |
+
