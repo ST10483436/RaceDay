@@ -5,9 +5,9 @@ using RaceDay.Api.Models;
 namespace RaceDay.Api.Controllers
 {// start of the namespace
 
-    /// <summary>
-    /// Manages RaceDay events. Anyone can view events; only Organisers can create, update or delete.
-    /// </summary>
+    
+    // Manages RaceDay events. Anyone can view events; only Organisers can create, update or delete.
+   
     [Route("api/[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
@@ -15,21 +15,21 @@ namespace RaceDay.Api.Controllers
         private int? CurrentUserId => HttpContext.Session.GetInt32("UserId");
         private string? CurrentRole => HttpContext.Session.GetString("UserRole");
 
-        /// <summary>
-        /// Retrieves all events in the system (public).
-        /// </summary>
+      
+        // Retrieves all events in the system (public).
+     
         /// <response code="200">List of events returned.</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetAll()
-        {
+        {// start of GetALL method
             var getter = new get_user_info();
             return Ok(getter.get_all_events());
-        }
+        }//end of getAll method
 
-        /// <summary>
-        /// Retrieves full details of a single event by ID (public).
-        /// </summary>
+        
+        // Retrieves full details of a single event by ID (public).
+        
         /// <param name="id">The event's unique ID.</param>
         /// <response code="200">Event found.</response>
         /// <response code="404">Event does not exist.</response>
@@ -37,16 +37,16 @@ namespace RaceDay.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Get(int id)
-        {
+        {//  START OF GET METHOD
             var getter = new get_user_info();
             var ev = getter.get_event_by_id(id);
             if (ev == null) return NotFound($"Event {id} not found.");
             return Ok(ev);
-        }
+        }//END OF GET METHOD
 
-        /// <summary>
-        /// Creates a new event. Only the logged-in Organiser can create.
-        /// </summary>
+        
+        // Creates a new event. Only the logged-in Organiser can create.
+        
         /// <response code="201">Event created.</response>
         /// <response code="400">Validation error.</response>
         /// <response code="401">Not logged in.</response>
@@ -57,7 +57,7 @@ namespace RaceDay.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult Create(string name, string? description, DateTime date, string location, decimal distance, string eventType)
-        {
+        {// START OF CREATE METHOD
             if (CurrentUserId == null) return Unauthorized("Not logged in.");
             if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can create events.");
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(location))
@@ -73,11 +73,11 @@ namespace RaceDay.Api.Controllers
             string result = storer.store_event(org.OrganiserId, name, description ?? "", date.ToString("yyyy-MM-dd HH:mm:ss"), location, distance, eventType);
 
             return StatusCode(201, new { message = result });
-        }
+        }//END OF CREATE METHOD
 
-        /// <summary>
-        /// Updates an event owned by the logged-in Organiser.
-        /// </summary>
+        
+        // Updates an event owned by the logged-in Organiser.
+        
         /// <response code="200">Event updated.</response>
         /// <response code="403">Not the owning Organiser.</response>
         /// <response code="404">Event not found.</response>
@@ -86,7 +86,7 @@ namespace RaceDay.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Update(int id, string name, string? description, DateTime date, string location, decimal distance, string eventType)
-        {
+        {// START OF UPDATE METHOD
             if (CurrentUserId == null) return Unauthorized("Not logged in.");
             if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can update events.");
 
@@ -101,11 +101,11 @@ namespace RaceDay.Api.Controllers
             var updater = new update_user_info();
             string result = updater.update_event(id, name, description ?? "", date.ToString("yyyy-MM-dd HH:mm:ss"), location, distance, eventType);
             return Ok(new { message = result });
-        }
+        }//END OF UPDATE METHOD
 
-        /// <summary>
-        /// Deletes an event owned by the logged-in Organiser.
-        /// </summary>
+      
+        // Deletes an event owned by the logged-in Organiser.
+       
         /// <response code="204">Event deleted.</response>
         /// <response code="403">Not the owning Organiser.</response>
         /// <response code="404">Event not found.</response>
@@ -114,7 +114,7 @@ namespace RaceDay.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
-        {
+        {// START OF DELETE METHOD
             if (CurrentUserId == null) return Unauthorized("Not logged in.");
             if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can delete events.");
 
@@ -129,7 +129,7 @@ namespace RaceDay.Api.Controllers
             var deleter = new delete_info();
             deleter.delete_event(id);
             return NoContent();
-        }
+        }//END OF DELETE METHOD
 
 
 
