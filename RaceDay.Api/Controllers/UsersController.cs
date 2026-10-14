@@ -12,26 +12,28 @@ namespace RaceDay.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
-    {
+    {// Start of usersController class
         private int? CurrentUserId => HttpContext.Session.GetInt32("UserId");
         private string? CurrentRole => HttpContext.Session.GetString("UserRole");
 
-        /// <summary>
-        /// Returns the profile of the currently logged-in user.
-        /// </summary>
+       
+        // Returns the profile of the currently logged-in user.
+        
         /// <response code="200">Profile returned.</response>
         /// <response code="401">Not logged in.</response>
         [HttpGet("me")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult Me()
-        {
+        {// start of Me method
+
+            // if statements
             if (CurrentUserId == null) return Unauthorized("Not logged in.");
 
             var getter = new get_user_info();
 
             if (CurrentRole == "Organiser")
-            {
+            {// start 
                 var org = getter.get_organiser_by_userId(CurrentUserId.Value);
                 return Ok(new
                 {
@@ -40,21 +42,21 @@ namespace RaceDay.Api.Controllers
                     fullName = org?.OrganiserName,
                     phoneNumber = org?.PhoneNumber
                 });
-            }
+            }//end 
 
             var p = getter.get_participant_by_userId(CurrentUserId.Value);
             return Ok(new
-            {
+            {// start of return statement
                 userId = CurrentUserId,
                 role = CurrentRole,
                 fullName = p != null ? p.FirstName + " " + p.LastName : "",
                 phoneNumber = p?.PhoneNumber
-            });
-        }
+            });//end of return statement
+        }//end of Me method
 
-        /// <summary>
-        /// Updates the currently logged-in user's profile.
-        /// </summary>
+        
+        // Updates the currently logged-in user's profile.
+        
         /// <param name="email">New email address.</param>
         /// <param name="fullName">New full name.</param>
         /// <param name="phoneNumber">New phone number.</param>
@@ -64,7 +66,7 @@ namespace RaceDay.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult Update(string email, string fullName, string phoneNumber)
-        {
+        {// start of update method
             if (CurrentUserId == null) return Unauthorized("Not logged in.");
 
             var updater = new update_user_info();
@@ -76,7 +78,7 @@ namespace RaceDay.Api.Controllers
                 updater.update_participant(CurrentUserId.Value, fullName, phoneNumber);
 
             return Ok(new { message = "Profile updated." });
-        }
+        }//end of update method
 
 
     }//end of class
