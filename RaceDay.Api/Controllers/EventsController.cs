@@ -5,7 +5,6 @@ using RaceDay.Api.Models;
 namespace RaceDay.Api.Controllers
 {// start of the namespace
 
-    
     // Manages RaceDay events. Anyone can view events; only Organisers can create, update or delete.
    
     [Route("api/[controller]")]
