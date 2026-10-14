@@ -5,9 +5,9 @@ using RaceDay.Api.Models;
 namespace RaceDay.Api.Controllers
 {// start of the namespace
 
-        /// <summary>
-        /// Captures and retrieves finishing results for RaceDay events.
-        /// </summary>
+        
+        // Captures and retrieves finishing results for RaceDay events.
+      
         [Route("api")]
         [ApiController]
         public class ResultsController : ControllerBase
@@ -15,9 +15,9 @@ namespace RaceDay.Api.Controllers
             private int? CurrentUserId => HttpContext.Session.GetInt32("UserId");
             private string? CurrentRole => HttpContext.Session.GetString("UserRole");
 
-            /// <summary>
-            /// Records a finishing time and position for a Participant (Organiser only).
-            /// </summary>
+            
+            //  Records a finishing time and position for a Participant (Organiser only).
+            
             /// <response code="201">Result recorded.</response>
             /// <response code="403">Not the owning Organiser.</response>
             /// <response code="404">Event or participant not found.</response>
@@ -28,7 +28,7 @@ namespace RaceDay.Api.Controllers
             [ProducesResponseType(StatusCodes.Status404NotFound)]
             [ProducesResponseType(StatusCodes.Status409Conflict)]
             public IActionResult Create(int eventId, int participantId, int categoryId, string finishTime, int position)
-            {
+            {// start of create method
                 if (CurrentUserId == null) return Unauthorized("Not logged in.");
                 if (CurrentRole != "Organiser") return StatusCode(403, "Only Organisers can record results.");
 
@@ -51,34 +51,34 @@ namespace RaceDay.Api.Controllers
                 var storer = new store_info();
                 string result = storer.store_result(eventId, participantId, categoryId, finishTime, position);
                 return StatusCode(201, new { message = result });
-            }
+            }//end of create method
 
-            /// <summary>
-            /// Retrieves all results for a specific event (public).
-            /// </summary>
+            
+            // Retrieves all results for a specific event (public).
+            
             /// <response code="200">List of results.</response>
             /// <response code="404">Event not found.</response>
             [HttpGet("events/{eventId}/results")]
             [ProducesResponseType(StatusCodes.Status200OK)]
             [ProducesResponseType(StatusCodes.Status404NotFound)]
             public IActionResult GetForEvent(int eventId)
-            {
+            {// start of GetForEvent Method
                 var getter = new get_user_info();
                 if (getter.get_event_by_id(eventId) == null)
                     return NotFound($"Event {eventId} not found.");
                 return Ok(getter.get_results_by_event(eventId));
-            }
+            }//end of GetForEvent method
 
-            /// <summary>
-            /// Retrieves the logged-in Participant's own results history.
-            /// </summary>
+            
+            // Retrieves the logged-in Participant's own results history.
+            
             /// <response code="200">List of results.</response>
             /// <response code="403">User is not a Participant.</response>
             [HttpGet("users/me/results")]
             [ProducesResponseType(StatusCodes.Status200OK)]
             [ProducesResponseType(StatusCodes.Status403Forbidden)]
             public IActionResult MyResults()
-            {
+            {// start of MyResults method
                 if (CurrentUserId == null) return Unauthorized("Not logged in.");
                 if (CurrentRole != "Participant") return StatusCode(403, "Only Participants can view their results.");
 
@@ -87,7 +87,7 @@ namespace RaceDay.Api.Controllers
                 if (p == null) return NotFound();
 
                 return Ok(getter.get_results_by_participant(p.ParticipantId));
-            }
+            }//end of  Myresult Method
 
         }//end of class
     }//end of the namespace
