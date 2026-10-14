@@ -56,9 +56,69 @@ In Part 2, I built the actual RESTful API that follows that plan. Here's what I 
 1. Open `RaceDay.sln` in Visual Studio 2022.
 2. In SSMS, connect to `(localdb)\api_guide` and run `docs/RACEDAY_database.sql`.
 3. Press **F5**.
-4. Swagger opens. Register an Organiser and a Participant, then start using the endpoints.
+
+   ## Database Setup
+
+The database is called **RACEDAY** and runs on LocalDB instance **api_guide**.
+
+To create it:
+1. Open SQL Server Management Studio
+2. Connect to `(localdb)\api_guide`
+3. Run the script in `docs/RACEDAY_database.sql`
+4. 7 empty tables will be created
+
+All data is inserted via Swagger, not seeded.
+5. Swagger opens. Register an Organiser and a Participant, then start using the endpoints.
 
 The database starts empty — all data is added through Swagger.
 
+## User Roles
 
+**Organiser**
+- Creates, edits and deletes events
+- Manages categories for their own events
+- Views all enrolments for their events
+- Records finish times and positions
 
+**Participant**
+- Browses available events
+- Enrols in events by selecting a category
+- Views personal enrolment history
+- Views personal results
+
+  ## API Endpoints Overview
+
+| Controller | Endpoints |
+|---|---|
+| Auth | register, login, logout |
+| Users | get profile, update profile |
+| Events | get all, get one, create, update, delete |
+| Categories | get, create, update, delete |
+| Enrolments | enrol, view by event, my enrolments |
+| Results | record, view by event, my results |
+
+## Security Notes
+
+- Passwords are hashed using **BCrypt** before storage
+- Plain-text passwords are never saved
+- Sessions store the UserId and Role
+- Role checks happen on every protected endpoint
+- Unauthorised users receive 401
+- Wrong-role users receive 403
+
+  ## How To Test
+
+Run these steps in Swagger in order:
+
+1. Register an Organiser
+2. Register a Participant
+3. Login as Organiser
+4. Create an event
+5. Add categories
+6. Login as Participant
+7. Enrol in the event
+8. Login back as Organiser
+9. Record a result
+10. Use GET endpoints to verify the data
+
+The database fills up as you go.
