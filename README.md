@@ -106,4 +106,19 @@ The database starts empty — all data is added through Swagger.
 - Unauthorised users receive 401
 - Wrong-role users receive 403
 
-  
+  ## How To Test
+
+Run these steps in Swagger in order:
+
+1. Register an Organiser
+2. Register a Participant
+3. Login as Organiser
+4. Create an event
+5. Add categories
+6. Login as Participant
+7. Enrol in the event
+8. Login back as Organiser
+9. Record a result
+10. Use GET endpoints to verify the data
+
+The database fills up as you go.
