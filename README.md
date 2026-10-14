@@ -72,5 +72,17 @@ All data is inserted via Swagger, not seeded.
 
 The database starts empty — all data is added through Swagger.
 
+## User Roles
 
+**Organiser**
+- Creates, edits and deletes events
+- Manages categories for their own events
+- Views all enrolments for their events
+- Records finish times and positions
+
+**Participant**
+- Browses available events
+- Enrols in events by selecting a category
+- Views personal enrolment history
+- Views personal results
 
