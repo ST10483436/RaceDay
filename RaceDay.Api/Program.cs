@@ -11,24 +11,24 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Enable XML comments in Swagger (rubric requirement)
 builder.Services.AddSwaggerGen(options =>
-{
+{// start 
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
         options.IncludeXmlComments(xmlPath);
-});
+});//end 
 
 // Session support for role-based auth
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
-{
+{// start of builder.services.addsession
     options.IdleTimeout = TimeSpan.FromHours(2);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-});
+});//end 
 
 var app = builder.Build();
-
+// if statement
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
