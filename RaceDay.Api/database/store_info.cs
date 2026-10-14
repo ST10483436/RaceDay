@@ -1,9 +1,9 @@
 ﻿using System.Data.SqlClient;
 
 namespace RaceDay.Api.database
-{
+{// start of the namespace
     public class store_info
-    {
+    {// start of class
         private string connection_string = @"Data source=(localdb)\api_guide; database=RACEDAY; Integrated Security=True;";
 
         // Insert a new user and return the new UsersId
@@ -134,5 +134,5 @@ namespace RaceDay.Api.database
             return message;
         }
 
-    }
-}
+    }//end of class
+}//end of the namespace
