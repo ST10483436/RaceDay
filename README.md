@@ -97,3 +97,13 @@ The database starts empty — all data is added through Swagger.
 | Enrolments | enrol, view by event, my enrolments |
 | Results | record, view by event, my results |
 
+## Security Notes
+
+- Passwords are hashed using **BCrypt** before storage
+- Plain-text passwords are never saved
+- Sessions store the UserId and Role
+- Role checks happen on every protected endpoint
+- Unauthorised users receive 401
+- Wrong-role users receive 403
+
+  
